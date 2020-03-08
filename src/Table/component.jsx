@@ -1,22 +1,18 @@
-import React, { Component } from 'react'
-
-import setUsersAction from "../actions/actionUsers"
-import { connect } from "react-redux"
+import React, { Component } from "react";
 
 class Table extends Component {
-
   renderUsers(user, index) {
-    const tdInfo = user.map((el, i) => <td key={i}>{el}</td>)
+    const tdInfo = user.map((el, i) => <td key={i}>{el}</td>);
     return (
       <tr>
         <th scope="row">{index + 1}</th>
         {tdInfo}
       </tr>
-    )
+    );
   }
 
-  componentDidMount() {
-  this.props.setUsersInfo()
+  componentWillMount() {
+    this.props.setUsersInfo();
   }
 
   render() {
@@ -35,26 +31,13 @@ class Table extends Component {
           </tr>
         </thead>
         <tbody>
-
+          {!this.props.users
+            ? null
+            : this.props.users.map((user, i) => this.renderUsers(user, i))}
         </tbody>
       </table>
-    )
-  }
-
-}
-
-function mapStateToProps(state) {
-  return {
-    leha: state,
+    );
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    setUsersInfo: () => {
-      dispatch(setUsersAction());
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Table);
+export default Table;
