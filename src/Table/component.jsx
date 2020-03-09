@@ -5,13 +5,14 @@ class Table extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      textFilter: '',
       sortedColumns: {
         firstName: 0,
         lastName: 0,
         username: 0,
         email: 0,
         isWorking: 0,
-        position: 0,
+        position: '-',
         state: 0,
       },
       priority: [],
@@ -22,7 +23,7 @@ class Table extends Component {
       username: 0,
       email: 0,
       isWorking: 0,
-      position: 0,
+      position: '-',
       state: 0,
     };
     this.positionColumnRef = React.createRef();
@@ -190,7 +191,7 @@ class Table extends Component {
               return {
                 sortedColumns: {
                   ...columnsArr,
-                  isWorking: this.positionColumnRef.current.value,
+                  position: this.positionColumnRef.current.value,
                 }
               }
             });
@@ -231,50 +232,62 @@ class Table extends Component {
       return {
         priority: a ? [...this.state.priority, column] : [column]
       }
-    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority); });
+    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter); });
+  }
+
+  textFilterChange = (event) => {
+    this.setState({
+      textFilter: event.target.value
+    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter) });
   }
 
   render() {
     return (
-      <table className="table table-hover">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th onClick={this.sort.bind(this, 0)}>
-              First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
-            </th>
-            <th onClick={this.sort.bind(this, 1)}>
-              Last Name {(this.state.sortedColumns.lastName === 1 && <>&#9660;</>) || (this.state.sortedColumns.lastName === 2 && <>&#9650;</>)}
-            </th>
-            <th onClick={this.sort.bind(this, 2)}>
-              Username {(this.state.sortedColumns.username === 1 && <>&#9660;</>) || (this.state.sortedColumns.username === 2 && <>&#9650;</>)}
-            </th>
-            <th onClick={this.sort.bind(this, 3)}>
-              Email {(this.state.sortedColumns.email === 1 && <>&#9660;</>) || (this.state.sortedColumns.email === 2 && <>&#9650;</>)}
-            </th>
-            <th onClick={this.sort.bind(this, 4)}>
-              Is working {(this.state.sortedColumns.isWorking === 1 && <>&#9660;</>) || (this.state.sortedColumns.isWorking === 2 && <>&#9650;</>)}
-            </th>
-            <th>
-                <label htmlFor="positionSelect">Position</label>
-                <select ref={this.positionColumnRef} className="form-control" id="positionSelect" onChange={this.sort.bind(this, 5)}>
-                  <option value="-">-</option>
-                  <option value="Junior">Junior</option>
-                  <option value="Middle">Middle</option>
-                  <option value="Senior">Senior</option>
-                </select>
-            </th>
-            <th onClick={this.sort.bind(this, 6)}>
-              State {(this.state.sortedColumns.state === 1 && <>&#9660;</>) || (this.state.sortedColumns.state === 2 && <>&#9650;</>)}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {!this.props.users
-            ? null
-            : this.props.users.map((user, i) => this.renderUsers(user, i))}
-        </tbody>
-      </table>
+      <div>
+        <label>
+          Text filter:
+        <input type="text" value={this.state.textFilter} onChange={this.textFilterChange} />
+        </label>
+        <table className="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th onClick={this.sort.bind(this, 0)}>
+                First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
+              </th>
+              <th onClick={this.sort.bind(this, 1)}>
+                Last Name {(this.state.sortedColumns.lastName === 1 && <>&#9660;</>) || (this.state.sortedColumns.lastName === 2 && <>&#9650;</>)}
+              </th>
+              <th onClick={this.sort.bind(this, 2)}>
+                Username {(this.state.sortedColumns.username === 1 && <>&#9660;</>) || (this.state.sortedColumns.username === 2 && <>&#9650;</>)}
+              </th>
+              <th onClick={this.sort.bind(this, 3)}>
+                Email {(this.state.sortedColumns.email === 1 && <>&#9660;</>) || (this.state.sortedColumns.email === 2 && <>&#9650;</>)}
+              </th>
+              <th onClick={this.sort.bind(this, 4)}>
+                Is working {(this.state.sortedColumns.isWorking === 1 && <>&#9660;</>) || (this.state.sortedColumns.isWorking === 2 && <>&#9650;</>)}
+              </th>
+              <th>
+                  <label htmlFor="positionSelect">Position</label>
+                  <select ref={this.positionColumnRef} className="form-control" id="positionSelect" onChange={this.sort.bind(this, 5)}>
+                    <option value="-">-</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Middle">Middle</option>
+                    <option value="Senior">Senior</option>
+                  </select>
+              </th>
+              <th onClick={this.sort.bind(this, 6)}>
+                State {(this.state.sortedColumns.state === 1 && <>&#9660;</>) || (this.state.sortedColumns.state === 2 && <>&#9650;</>)}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {!this.props.users
+              ? null
+              : this.props.users.map((user, i) => this.renderUsers(user, i))}
+          </tbody>
+        </table>
+      </div>
     );
   }
 }

@@ -28,8 +28,10 @@ const setUsers = () => dispatch => {
   dispatch(setUsersAction(initialData));
 };
 
-const sort = (sortedColumns, priorityArr) => dispatch => {
+const sort = (sortedColumns, priorityArr, textFilter) => dispatch => {
   let users = [].concat(initialData);
+  users = users.filter(arr => arr.some((item) => item.toLowerCase().indexOf(textFilter.toLowerCase().trim()) === -1 ? false : true));
+  if (sortedColumns.position !== "-") users = users.filter(arr => arr[5] === sortedColumns.position);
   let preColumnIndex = null;
   for (let columnIndex of priorityArr) {
     const column = Object.keys(sortedColumns)[columnIndex];
@@ -49,9 +51,6 @@ const sort = (sortedColumns, priorityArr) => dispatch => {
           default:
             break;
         }
-      } else {
-        if (sortedColumns[column] === "-") continue;
-        users = users.filter(arr => arr[5] === sortedColumns[column]);
       }
     } else {
       const preColumnIndex2 = preColumnIndex;
@@ -76,9 +75,6 @@ const sort = (sortedColumns, priorityArr) => dispatch => {
           default:
             break;
         }
-      } else {
-        if (sortedColumns[column] === "-") continue;
-        users = users.filter(arr => arr[5] === sortedColumns[column]);
       }
     }
     preColumnIndex = columnIndex;
@@ -97,8 +93,8 @@ function mapDispatchToProps(dispatch) {
     setUsersInfo: () => {
       dispatch(setUsers());
     },
-    sortUsersInfo: (sortedColumns, priorityArr) => {
-      dispatch(sort(sortedColumns, priorityArr));
+    sortUsersInfo: (sortedColumns, priorityArr, textFilter) => {
+      dispatch(sort(sortedColumns, priorityArr, textFilter));
     }
   };
 }
