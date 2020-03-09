@@ -30,19 +30,56 @@ const setUsers = () => dispatch => {
 };
 
 const sort = (sortedColumns, priorityArr) => dispatch => {
-    const users = [].concat(initialData);
-    for (let column in sortedColumns) {
-      switch (sortedColumns[column]) {
-        case 1:
-          users.sort((a, b) => a[priorityArr[priorityArr.length - 1]] > b[priorityArr[priorityArr.length - 1]] ? 1 : -1)
-          break;
-        case 2:
-          users.sort((a, b) => a[priorityArr[priorityArr.length - 1]] > b[priorityArr[priorityArr.length - 1]] ? -1 : 1)
-          break;
-        default:
-          break;
+    let users = [].concat(initialData);
+    let preColumnIndex = null;
+    for (let columnIndex of priorityArr) {
+      const column = Object.keys(sortedColumns)[columnIndex];
+      if (preColumnIndex === null) {
+        if (typeof sortedColumns[column] !== 'string') {
+          switch (sortedColumns[column]) {
+            case 1:
+              users.sort((a, b) => a[priorityArr[0]] > b[priorityArr[0]] ? 1 : -1)
+              break;
+            case 2:
+              users.sort((a, b) => a[priorityArr[0]] > b[priorityArr[0]] ? -1 : 1)
+              break;
+            default:
+              break;
+          }
+        } else {
+          if (sortedColumns[column] === '-') continue;
+          users = users.filter((arr) => arr[5] === sortedColumns[column])
+        }
+      } else {
+        const preColumnIndex2 = preColumnIndex;
+          if (typeof sortedColumns[column] !== 'string') {
+            switch (sortedColumns[column]) {
+              case 1:
+                users.sort((a, b) => {
+                  if (a[preColumnIndex2] !== b[preColumnIndex2]) {
+                    return 0;
+                  };
+                  return a[columnIndex] > b[columnIndex] ? 1 : -1
+                });
+                break;
+              case 2:
+                users.sort((a, b) => {
+                  if (a[preColumnIndex2] !== b[preColumnIndex2]) {
+                    return 0;
+                  };
+                  return a[columnIndex] > b[columnIndex] ? -1 : 1
+                });
+                break;
+              default:
+                break;
+            }
+          } else {
+            if (sortedColumns[column] === '-') continue;
+            users = users.filter((arr) => arr[5] === sortedColumns[column])
+          }
+        }
+        preColumnIndex = columnIndex;
       }
-    }
     dispatch(sortUsersAction(users));
 }
 

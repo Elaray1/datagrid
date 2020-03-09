@@ -1,3 +1,18 @@
+#positionSelect {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    padding: 0px;
+    margin-left: 10px;
+}
+
+label {
+  margin-bottom: 0;
+}
+
 body {
-  
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
