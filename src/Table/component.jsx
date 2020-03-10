@@ -255,12 +255,19 @@ class Table extends Component {
   textFilterChange = (event) => {
     this.setState({
       textFilter: event.target.value,
-      searchOptions: this.searchSelectRef.current.state.value.map((obj) => obj.value)
     }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions) });
   }
 
   isInputBlocked = (event) => {
-    event === null ? this.searchInputRef.current.setAttribute('disabled', true) : this.searchInputRef.current.removeAttribute('disabled')
+    this.searchInputRef.current.value = '';
+    if (event === null) {
+      this.searchInputRef.current.setAttribute('disabled', true);
+      return;
+    }
+    this.searchInputRef.current.removeAttribute('disabled');
+    this.setState({
+      searchOptions: event.map((obj) => obj.value)
+    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions) });
   }
 
   render() {
