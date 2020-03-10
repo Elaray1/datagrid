@@ -28,24 +28,33 @@ const setUsers = () => dispatch => {
   dispatch(setUsersAction(initialData));
 };
 
-const sort = (sortedColumns, priorityArr, textFilter, searchOptions) => dispatch => {
+const sort = (sortedColumns, priorityArr, textFilter, searchOptions, isWorking) => dispatch => {
   let users = [].concat(initialData);
-  users = users.filter((el) => {
-    let flag = false;
-    searchOptions.forEach((i) => {
-      if (el[i].toLowerCase().indexOf(textFilter.toLowerCase().trim()) !== -1) {
-        flag = true;
-        return;
-      };
-    })
-    return flag;
-  });
-  if (sortedColumns.position !== "-") users = users.filter(arr => arr[5] === sortedColumns.position);
+  if (isWorking) {
+    users = users.filter((el) => el[4] === 'true');
+  }
+  if (searchOptions !== null) {
+    users = users.filter((el) => {
+      let flag = false;
+      searchOptions.forEach((i) => {
+        if (el[i].toLowerCase().indexOf(textFilter.toLowerCase().trim()) !== -1) {
+          flag = true;
+          return;
+        };
+      })
+      return flag;
+    });
+  }
+  if (sortedColumns.position.length !== 3) {
+    users = users.filter((arr) => {
+      return sortedColumns.position.some((el) => arr[5] === el);
+    });
+  }
   let preColumnIndex = null;
   for (let columnIndex of priorityArr) {
     const column = Object.keys(sortedColumns)[columnIndex];
     if (preColumnIndex === null) {
-      if (typeof sortedColumns[column] !== "string") {
+      if (typeof sortedColumns[column] !== "object") {
         switch (sortedColumns[column]) {
           case 1:
             users.sort((a, b) =>
@@ -63,7 +72,7 @@ const sort = (sortedColumns, priorityArr, textFilter, searchOptions) => dispatch
       }
     } else {
       const preColumnIndex2 = preColumnIndex;
-      if (typeof sortedColumns[column] !== "string") {
+      if (typeof sortedColumns[column] !== "object") {
         switch (sortedColumns[column]) {
           case 1:
             users.sort((a, b) => {
@@ -102,8 +111,8 @@ function mapDispatchToProps(dispatch) {
     setUsersInfo: () => {
       dispatch(setUsers());
     },
-    sortUsersInfo: (sortedColumns, priorityArr, textFilter, searchOptions) => {
-      dispatch(sort(sortedColumns, priorityArr, textFilter, searchOptions));
+    sortUsersInfo: (sortedColumns, priorityArr, textFilter, searchOptions, isWorking) => {
+      dispatch(sort(sortedColumns, priorityArr, textFilter, searchOptions, isWorking));
     }
   };
 }

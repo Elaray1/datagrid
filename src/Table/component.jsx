@@ -1,11 +1,16 @@
 import React, { Component } from "react";
 import Select from 'react-select';
+import ToggleButton from 'react-toggle-button'
+
 
 class Table extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
+      toggleButton: false,
+      prePositionInfo: ['Junior', 'Middle', 'Senior'].map((el) => {
+        return { value: el, label: el };
+      }),
       textFilter: '',
       sortedColumns: {
         firstName: 0,
@@ -13,7 +18,7 @@ class Table extends Component {
         username: 0,
         email: 0,
         isWorking: 0,
-        position: '-',
+        position: ['Junior', 'Middle', 'Senior'],
         state: 0,
       },
       priority: [],
@@ -25,12 +30,13 @@ class Table extends Component {
       username: 0,
       email: 0,
       isWorking: 0,
-      position: '-',
+      position: ['Junior', 'Middle', 'Senior'],
       state: 0,
     };
     this.defaultSearchOptions = [ { value: 'firstName', label: 'firstName' } ];
     this.positionColumnRef = React.createRef();
     this.searchSelectRef = React.createRef();
+    this.positionsSelectRef = React.createRef();
     this.searchInputRef = React.createRef();
   }
 
@@ -125,7 +131,7 @@ class Table extends Component {
             return {
               sortedColumns: {
                 ...columnsArr,
-                userName: 0,
+                username: 0,
               }
             }
           }) :
@@ -249,27 +255,44 @@ class Table extends Component {
       return {
         priority: a ? [...this.state.priority, column] : [column]
       }
-    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions); });
+    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions, this.state.toggleButton); });
   }
 
   textFilterChange = (event) => {
     this.setState({
       textFilter: event.target.value,
-    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions) });
+    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions, this.state.toggleButton) });
   }
 
   isInputBlocked = (event) => {
     if (event === null) {
       this.setState({
-        textFilter: ''
-      });
+        textFilter: '',
+        searchOptions: event
+      }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions, this.state.toggleButton) });
       this.searchInputRef.current.setAttribute('disabled', true);
       return;
     }
     this.searchInputRef.current.removeAttribute('disabled');
     this.setState({
       searchOptions: event.map((obj) => obj.value)
-    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions) });
+    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions, this.state.toggleButton) });
+  }
+
+  selectPositions = (event) => {
+    if (event !== null) {
+      this.resetSortedColumns = {
+        ...this.resetSortedColumns,
+        position: event.map((el) => el.value)
+      }
+      this.setState({
+        prePositionInfo: event,
+        sortedColumns: {
+          ...this.state.sortedColumns,
+          position: event.map((el) => el.value)
+        },
+      }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions, this.state.toggleButton) });
+    }
   }
 
   render() {
@@ -296,7 +319,31 @@ class Table extends Component {
             onChange={this.isInputBlocked}
           />
         </div>
-
+        <ToggleButton
+          inactiveLabel={'OFF'}
+          activeLabel={'ON'}
+          value={this.state.toggleButton}
+          onToggle={(value) => {
+            this.setState({
+              toggleButton: !this.state.toggleButton,
+              sortedColumns: {
+                ...this.state.sortedColumns,
+                isWorking: 0,
+              }
+            }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions, this.state.toggleButton) });
+          }} />
+          <Select
+            ref={this.positionsSelectRef}
+            isMulti
+            name="position"
+            options={['Junior', 'Middle', 'Senior'].map((el) => {
+              return { value: el, label: el };
+            })}
+            value={this.state.prePositionInfo}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            onChange={this.selectPositions}
+          />
         <table className="table table-hover">
           <thead>
             <tr>
@@ -313,17 +360,11 @@ class Table extends Component {
               <th onClick={this.sort.bind(this, 3)}>
                 Email {(this.state.sortedColumns.email === 1 && <>&#9660;</>) || (this.state.sortedColumns.email === 2 && <>&#9650;</>)}
               </th>
-              <th onClick={this.sort.bind(this, 4)}>
+              <th onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
                 Is working {(this.state.sortedColumns.isWorking === 1 && <>&#9660;</>) || (this.state.sortedColumns.isWorking === 2 && <>&#9650;</>)}
               </th>
               <th>
-                  <label htmlFor="positionSelect">Position</label>
-                  <select ref={this.positionColumnRef} className="form-control" id="positionSelect" onChange={this.sort.bind(this, 5)}>
-                    <option value="-">-</option>
-                    <option value="Junior">Junior</option>
-                    <option value="Middle">Middle</option>
-                    <option value="Senior">Senior</option>
-                  </select>
+                Position
               </th>
               <th onClick={this.sort.bind(this, 6)}>
                 State {(this.state.sortedColumns.state === 1 && <>&#9660;</>) || (this.state.sortedColumns.state === 2 && <>&#9650;</>)}
