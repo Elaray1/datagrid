@@ -259,8 +259,10 @@ class Table extends Component {
   }
 
   isInputBlocked = (event) => {
-    this.searchInputRef.current.value = '';
     if (event === null) {
+      this.setState({
+        textFilter: ''
+      });
       this.searchInputRef.current.setAttribute('disabled', true);
       return;
     }
