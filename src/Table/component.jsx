@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Select from 'react-select';
 
 class Table extends Component {
 
@@ -16,6 +17,7 @@ class Table extends Component {
         state: 0,
       },
       priority: [],
+      searchOptions: ['0'],
     };
     this.resetSortedColumns = {
       firstName: 0,
@@ -26,7 +28,10 @@ class Table extends Component {
       position: '-',
       state: 0,
     };
+    this.defaultSearchOptions = [ { value: 'firstName', label: 'firstName' } ];
     this.positionColumnRef = React.createRef();
+    this.searchSelectRef = React.createRef();
+    this.searchInputRef = React.createRef();
   }
 
   renderUsers(user, index) {
@@ -39,9 +44,21 @@ class Table extends Component {
     );
   }
 
+  getColumnsArr = () => {
+    const arr = [];
+    for (let key in this.state.sortedColumns) {
+      arr.push(key);
+    }
+    const options = arr.map((el, i) => {
+      return { value: i, label: el };
+    });
+    return options;
+  }
+
   componentWillMount() {
     this.props.setUsersInfo();
   }
+
 
   sort = (column, e) => {
     const columnsArr = e.shiftKey ? this.state.sortedColumns : this.resetSortedColumns;
@@ -232,22 +249,45 @@ class Table extends Component {
       return {
         priority: a ? [...this.state.priority, column] : [column]
       }
-    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter); });
+    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions); });
   }
 
   textFilterChange = (event) => {
     this.setState({
-      textFilter: event.target.value
-    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter) });
+      textFilter: event.target.value,
+      searchOptions: this.searchSelectRef.current.state.value.map((obj) => obj.value)
+    }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions) });
+  }
+
+  isInputBlocked = (event) => {
+    event === null ? this.searchInputRef.current.setAttribute('disabled', true) : this.searchInputRef.current.removeAttribute('disabled')
   }
 
   render() {
     return (
       <div>
-        <label>
-          Text filter:
-        <input type="text" value={this.state.textFilter} onChange={this.textFilterChange} />
-        </label>
+        <div>
+          <label>
+            Text filter:
+          <input
+            ref={this.searchInputRef}
+            type="text"
+            value={this.state.textFilter}
+            onChange={this.textFilterChange}
+          />
+          </label>
+          <Select
+            ref={this.searchSelectRef}
+            isMulti
+            defaultValue={[this.getColumnsArr()[0]]}
+            name="columns"
+            options={this.getColumnsArr()}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            onChange={this.isInputBlocked}
+          />
+        </div>
+
         <table className="table table-hover">
           <thead>
             <tr>
