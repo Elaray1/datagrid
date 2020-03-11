@@ -9,7 +9,10 @@ class Table extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isReactWindow: true,
+      color: '#E9967A',
+      selectedColumns: [],
+      columnsColors: ['white', 'white', 'white', 'white', 'white', 'white', 'white'],
+      isReactWindow: false,
       toggleButton: false,
       prePositionInfo: ['Junior', 'Middle', 'Senior'].map((el) => {
         return { value: el, label: el };
@@ -43,16 +46,6 @@ class Table extends Component {
     this.searchInputRef = React.createRef();
   }
 
-  renderUsers(user, index) {
-    const tdInfo = user.map((el, i) => <td key={i + 100 * 10}>{el}</td>);
-    return (
-      <tr key={index}>
-        <th scope="row">{index + 1}</th>
-        {tdInfo}
-      </tr>
-    );
-  }
-
   getColumnsArr = () => {
     const arr = [];
     for (let key in this.state.sortedColumns) {
@@ -68,9 +61,29 @@ class Table extends Component {
     this.props.setUsersInfo();
   }
 
-
   sort = (column, e) => {
     const columnsArr = e.shiftKey ? this.state.sortedColumns : this.resetSortedColumns;
+    if (e.ctrlKey) {
+      e.target.classList.toggle('selected-column');
+      let arr = this.state.selectedColumns;
+      document.querySelectorAll('.selected-column').forEach((el) => (arr.push(+el.getAttribute('id').substr(7))));
+      this.setState({
+        selectedColumns: arr
+      });
+      arr.forEach((id) => {
+        document.querySelectorAll(`td:nth-child(${id})`).forEach((el) => {
+          el.setAttribute('style', 'color: red');
+        })
+      });
+      return;
+    } else {
+      this.setState({
+        selectedColumns: []
+      });
+      document.querySelectorAll('.selected-column').forEach((el) => {
+        el.classList.toggle('selected-column');
+      })
+    }
     switch (column) {
       case 0:
         this.state.sortedColumns.firstName === 2 ?
@@ -251,7 +264,7 @@ class Table extends Component {
                 });
                 break;
           default:
-            throw new Error('Incorrect column');
+            return
     }
     const a = e.shiftKey;
     this.setState((prevState) => {
@@ -298,13 +311,40 @@ class Table extends Component {
     }
   }
 
+  changeColor = (e) => {
+    this.setState({
+      color: e.target.value
+    });
+  }
+
+  changeColumnsColor = () => {
+    this.state.selectedColumns.forEach((columnNumber) => {
+      const arr = this.state.columnsColors;
+      arr.splice(columnNumber, 1, this.state.color);
+      this.setState({
+        columnsColors: arr
+      });
+    });
+  }
+
   render() {
+
+    const renderUsers = (user, index) => {
+      const tdInfo = user.map((el, i) => <td key={i + 100 * 10} style={{ color: this.state.columnsColors[i+1] }} >{el}</td>);
+      return (
+        <tr key={index}>
+          <th scope="row">{index + 1}</th>
+          {tdInfo}
+        </tr>
+      );
+    }
+
     const items = this.props.users
 
     const Row = ({ index, style }) => (
         <tr key={index} style={style} className="tableRow">
           <th scope="row">{index + 1}</th>
-          {items[index].map((el, i) => <td key={i + 100 * 10}>{el}</td>)}
+          {items[index].map((el, i) => <td style={{ color: this.state.columnsColors[i+1] }} key={i + 100 * 10}>{el}</td>)}
         </tr>
     );
 
@@ -325,32 +365,32 @@ class Table extends Component {
         <thead>
           <tr className="tableRow">
             <th>#</th>
-            <th onClick={this.sort.bind(this, 0)}>
+            <th id="column-1" style={{ color: this.state.selectedColumns.indexOf(1) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 0)}>
               First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
             </th>
-            <th onClick={this.sort.bind(this, 1)}>
+            <th id="column-2" style={{ color: this.state.selectedColumns.indexOf(2) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 1)}>
               Last Name {(this.state.sortedColumns.lastName === 1 && <>&#9660;</>) || (this.state.sortedColumns.lastName === 2 && <>&#9650;</>)}
             </th>
-            <th onClick={this.sort.bind(this, 2)}>
+            <th id="column-3" style={{ color: this.state.selectedColumns.indexOf(3) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 2)}>
               Username {(this.state.sortedColumns.username === 1 && <>&#9660;</>) || (this.state.sortedColumns.username === 2 && <>&#9650;</>)}
             </th>
-            <th onClick={this.sort.bind(this, 3)}>
+            <th id="column-4" style={{ color: this.state.selectedColumns.indexOf(4) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 3)}>
               Email {(this.state.sortedColumns.email === 1 && <>&#9660;</>) || (this.state.sortedColumns.email === 2 && <>&#9650;</>)}
             </th>
-            <th onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
+            <th id="column-5" style={{ color: this.state.selectedColumns.indexOf(5) !== -1 ? 'red' : 'inherit' }} onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
               Is working {(this.state.sortedColumns.isWorking === 1 && <>&#9660;</>) || (this.state.sortedColumns.isWorking === 2 && <>&#9650;</>)}
             </th>
-            <th>
+            <th id="column-6" style={{ color: this.state.selectedColumns.indexOf(6) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 999)}>
               Position
             </th>
-            <th onClick={this.sort.bind(this, 6)}>
+            <th id="column-7" style={{ color: this.state.selectedColumns.indexOf(7) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 6)}>
               State {(this.state.sortedColumns.state === 1 && <>&#9660;</>) || (this.state.sortedColumns.state === 2 && <>&#9650;</>)}
             </th>
           </tr>
         </thead>
         <tbody>
           {!this.props.users ? null
-            : this.props.users.map((user, i) => this.renderUsers(user, i))}
+            : this.props.users.map((user, i) => renderUsers(user, i, this.state.columnsColors))}
         </tbody>
       </table>
       :
@@ -359,25 +399,25 @@ class Table extends Component {
         <thead>
           <tr className="tableRow">
             <th>#</th>
-            <th onClick={this.sort.bind(this, 0)}>
+            <th id="column-1" style={{ color: this.state.selectedColumns.indexOf(1) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 0)}>
               First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
             </th>
-            <th onClick={this.sort.bind(this, 1)}>
+            <th id="column-2" style={{ color: this.state.selectedColumns.indexOf(2) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 1)}>
               Last Name {(this.state.sortedColumns.lastName === 1 && <>&#9660;</>) || (this.state.sortedColumns.lastName === 2 && <>&#9650;</>)}
             </th>
-            <th onClick={this.sort.bind(this, 2)}>
+            <th id="column-3" style={{ color: this.state.selectedColumns.indexOf(3) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 2)}>
               Username {(this.state.sortedColumns.username === 1 && <>&#9660;</>) || (this.state.sortedColumns.username === 2 && <>&#9650;</>)}
             </th>
-            <th onClick={this.sort.bind(this, 3)}>
+            <th id="column-4" style={{ color: this.state.selectedColumns.indexOf(4) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 3)}>
               Email {(this.state.sortedColumns.email === 1 && <>&#9660;</>) || (this.state.sortedColumns.email === 2 && <>&#9650;</>)}
             </th>
-            <th onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
+            <th  id="column-5" style={{ color: this.state.selectedColumns.indexOf(5) !== -1 ? 'red' : 'inherit' }} onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
               Is working {(this.state.sortedColumns.isWorking === 1 && <>&#9660;</>) || (this.state.sortedColumns.isWorking === 2 && <>&#9650;</>)}
             </th>
-            <th>
+            <th id="column-6" style={{ color: this.state.selectedColumns.indexOf(6) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 999)}>
               Position
             </th>
-            <th onClick={this.sort.bind(this, 6)}>
+            <th id="column-7" style={{ color: this.state.selectedColumns.indexOf(7) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 6)}>
               State {(this.state.sortedColumns.state === 1 && <>&#9660;</>) || (this.state.sortedColumns.state === 2 && <>&#9650;</>)}
             </th>
           </tr>
@@ -447,6 +487,12 @@ class Table extends Component {
             classNamePrefix="select"
             onChange={this.selectPositions}
           />
+          {this.state.selectedColumns.length ?
+              <div>
+                <input type="color" value={this.state.color} onChange={this.changeColor} />
+                <button type="button" className="btn btn-success" onClick={this.changeColumnsColor}>Change color</button>
+              </div>
+             : null}
           <TableContent />
       </div>
     );
