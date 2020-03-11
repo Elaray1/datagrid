@@ -16,3 +16,40 @@ body {
   -webkit-user-select: none;
   user-select: none;
 }
+
+.tableRow td:nth-child(1), th:nth-child(1) {
+  width: 50px;
+}
+
+.tableRow td:nth-child(2), th:nth-child(2) {
+  width: 100px;
+}
+
+.tableRow td:nth-child(3), th:nth-child(3) {
+  width: 100px;
+}
+
+.tableRow td:nth-child(4), th:nth-child(4) {
+  width: 176px;
+}
+
+.tableRow td:nth-child(5), th:nth-child(5) {
+  width: 278px;
+}
+
+.tableRow td:nth-child(6), th:nth-child(6) {
+  width: 83px;
+}
+
+.tableRow td:nth-child(7), th:nth-child(7) {
+  width: 82px;
+}
+
+.tableRow td:nth-child(8), th:nth-child(8) {
+  width: 121px;
+}
+
+.table {
+  width: 1000px;
+  margin: auto;
+}

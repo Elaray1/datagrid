@@ -9,6 +9,7 @@ class Table extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isReactWindow: true,
       toggleButton: false,
       prePositionInfo: ['Junior', 'Middle', 'Senior'].map((el) => {
         return { value: el, label: el };
@@ -301,7 +302,7 @@ class Table extends Component {
     const items = this.props.users
 
     const Row = ({ index, style }) => (
-        <tr key={index} style={style}>
+        <tr key={index} style={style} className="tableRow">
           <th scope="row">{index + 1}</th>
           {items[index].map((el, i) => <td key={i + 100 * 10}>{el}</td>)}
         </tr>
@@ -310,13 +311,85 @@ class Table extends Component {
     const ListComponent = () => (
       <FixedSizeList
         height={400}
-        width={900}
+        width={1000}
         itemSize={40}
         itemCount={items.length}
       >
         {Row}
       </FixedSizeList>
     );
+
+    const TableContent = () => {
+      return !this.state.isReactWindow ?
+      <table className="table table-hover">
+        <thead>
+          <tr className="tableRow">
+            <th>#</th>
+            <th onClick={this.sort.bind(this, 0)}>
+              First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
+            </th>
+            <th onClick={this.sort.bind(this, 1)}>
+              Last Name {(this.state.sortedColumns.lastName === 1 && <>&#9660;</>) || (this.state.sortedColumns.lastName === 2 && <>&#9650;</>)}
+            </th>
+            <th onClick={this.sort.bind(this, 2)}>
+              Username {(this.state.sortedColumns.username === 1 && <>&#9660;</>) || (this.state.sortedColumns.username === 2 && <>&#9650;</>)}
+            </th>
+            <th onClick={this.sort.bind(this, 3)}>
+              Email {(this.state.sortedColumns.email === 1 && <>&#9660;</>) || (this.state.sortedColumns.email === 2 && <>&#9650;</>)}
+            </th>
+            <th onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
+              Is working {(this.state.sortedColumns.isWorking === 1 && <>&#9660;</>) || (this.state.sortedColumns.isWorking === 2 && <>&#9650;</>)}
+            </th>
+            <th>
+              Position
+            </th>
+            <th onClick={this.sort.bind(this, 6)}>
+              State {(this.state.sortedColumns.state === 1 && <>&#9660;</>) || (this.state.sortedColumns.state === 2 && <>&#9650;</>)}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {!this.props.users ? null
+            : this.props.users.map((user, i) => this.renderUsers(user, i))}
+        </tbody>
+      </table>
+      :
+      <>
+      <table className="table table-hover">
+        <thead>
+          <tr className="tableRow">
+            <th>#</th>
+            <th onClick={this.sort.bind(this, 0)}>
+              First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
+            </th>
+            <th onClick={this.sort.bind(this, 1)}>
+              Last Name {(this.state.sortedColumns.lastName === 1 && <>&#9660;</>) || (this.state.sortedColumns.lastName === 2 && <>&#9650;</>)}
+            </th>
+            <th onClick={this.sort.bind(this, 2)}>
+              Username {(this.state.sortedColumns.username === 1 && <>&#9660;</>) || (this.state.sortedColumns.username === 2 && <>&#9650;</>)}
+            </th>
+            <th onClick={this.sort.bind(this, 3)}>
+              Email {(this.state.sortedColumns.email === 1 && <>&#9660;</>) || (this.state.sortedColumns.email === 2 && <>&#9650;</>)}
+            </th>
+            <th onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
+              Is working {(this.state.sortedColumns.isWorking === 1 && <>&#9660;</>) || (this.state.sortedColumns.isWorking === 2 && <>&#9650;</>)}
+            </th>
+            <th>
+              Position
+            </th>
+            <th onClick={this.sort.bind(this, 6)}>
+              State {(this.state.sortedColumns.state === 1 && <>&#9660;</>) || (this.state.sortedColumns.state === 2 && <>&#9650;</>)}
+            </th>
+          </tr>
+        </thead>
+      </table>
+      <table className="table table-hover">
+        <tbody>
+          <ListComponent />
+        </tbody>
+      </table>
+      </>
+    }
     return (
       <div>
         <div>
@@ -353,6 +426,15 @@ class Table extends Component {
               }
             }, function() { this.props.sortUsersInfo(this.state.sortedColumns, this.state.priority, this.state.textFilter, this.state.searchOptions, this.state.toggleButton) });
           }} />
+          <ToggleButton
+            inactiveLabel={'OFF'}
+            activeLabel={'ON'}
+            value={this.state.isReactWindow}
+            onToggle={(value) => {
+              this.setState({
+                isReactWindow: !this.state.isReactWindow,
+              });
+            }} />
           <Select
             ref={this.positionsSelectRef}
             isMulti
@@ -365,37 +447,7 @@ class Table extends Component {
             classNamePrefix="select"
             onChange={this.selectPositions}
           />
-        <table className="table table-hover">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th onClick={this.sort.bind(this, 0)}>
-                First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
-              </th>
-              <th onClick={this.sort.bind(this, 1)}>
-                Last Name {(this.state.sortedColumns.lastName === 1 && <>&#9660;</>) || (this.state.sortedColumns.lastName === 2 && <>&#9650;</>)}
-              </th>
-              <th onClick={this.sort.bind(this, 2)}>
-                Username {(this.state.sortedColumns.username === 1 && <>&#9660;</>) || (this.state.sortedColumns.username === 2 && <>&#9650;</>)}
-              </th>
-              <th onClick={this.sort.bind(this, 3)}>
-                Email {(this.state.sortedColumns.email === 1 && <>&#9660;</>) || (this.state.sortedColumns.email === 2 && <>&#9650;</>)}
-              </th>
-              <th onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
-                Is working {(this.state.sortedColumns.isWorking === 1 && <>&#9660;</>) || (this.state.sortedColumns.isWorking === 2 && <>&#9650;</>)}
-              </th>
-              <th>
-                Position
-              </th>
-              <th onClick={this.sort.bind(this, 6)}>
-                State {(this.state.sortedColumns.state === 1 && <>&#9660;</>) || (this.state.sortedColumns.state === 2 && <>&#9650;</>)}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <ListComponent />
-          </tbody>
-        </table>
+          <TableContent />
       </div>
     );
   }
