@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Select from 'react-select';
-import ToggleButton from 'react-toggle-button'
+import ToggleButton from 'react-toggle-button';
+
+import { FixedSizeList } from 'react-window';
 
 
 class Table extends Component {
@@ -296,6 +298,25 @@ class Table extends Component {
   }
 
   render() {
+    const items = this.props.users
+
+    const Row = ({ index, style }) => (
+        <tr key={index} style={style}>
+          <th scope="row">{index + 1}</th>
+          {items[index].map((el, i) => <td key={i + 100 * 10}>{el}</td>)}
+        </tr>
+    );
+
+    const ListComponent = () => (
+      <FixedSizeList
+        height={400}
+        width={900}
+        itemSize={40}
+        itemCount={items.length}
+      >
+        {Row}
+      </FixedSizeList>
+    );
     return (
       <div>
         <div>
@@ -372,9 +393,7 @@ class Table extends Component {
             </tr>
           </thead>
           <tbody>
-            {!this.props.users
-              ? null
-              : this.props.users.map((user, i) => this.renderUsers(user, i))}
+            <ListComponent />
           </tbody>
         </table>
       </div>

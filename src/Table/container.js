@@ -13,7 +13,7 @@ const randomInteger = (min, max) => {
 };
 
 const setUsers = () => dispatch => {
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 100; i++) {
     initialData.push([
       Faker.name.firstName(),
       Faker.name.lastName(),
