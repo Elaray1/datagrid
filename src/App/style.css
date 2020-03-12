@@ -57,3 +57,25 @@ body {
 .selected-column {
   color: red;
 }
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: #272B30;
+}
+
+.row-index {
+  position: sticky;
+  left: 0px;
+  background: #272B30;
+}
+
+.row-firstName {
+  position: sticky;
+  left: 50px;
+  background: #272B30;
+}
+
+.z-index-100 {
+  z-index: 100;
+}

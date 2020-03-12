@@ -348,10 +348,10 @@ class Table extends Component {
   render() {
 
     const renderUsers = (user, index) => {
-      const tdInfo = user.map((el, i) => this.state.visibleColumns[i+1] ? <td key={i + 100 * 10} style={{ color: this.state.columnsColors[i+1] }} >{el}</td> : null);
+      const tdInfo = user.map((el, i) => this.state.visibleColumns[i+1] ? <td className={i === 0 ? "row-firstName" : "kekw"} key={i + 100 * 10} style={{ color: this.state.columnsColors[i+1] }} >{el}</td> : null);
       return (
         <tr key={index}>
-          <th scope="row">{index + 1}</th>
+          <th className="row-index" scope="row">{index + 1}</th>
           {tdInfo}
         </tr>
       );
@@ -361,8 +361,8 @@ class Table extends Component {
 
     const Row = ({ index, style }) => (
         <tr key={index} style={style} className="tableRow">
-          <th scope="row">{index + 1}</th>
-          {items[index].map((el, i) => this.state.visibleColumns[i+1] ? <td key={i + 100 * 10} style={{ color: this.state.columnsColors[i+1] }} >{el}</td> : null)}
+          <th className="row-index" scope="row">{index + 1}</th>
+          {items[index].map((el, i) => this.state.visibleColumns[i+1] ? <td className={i === 0 ? "row-firstName" : "kekw"} key={i + 100 * 10} style={{ color: this.state.columnsColors[i+1] }} >{el}</td> : null)}
         </tr>
     );
 
@@ -382,8 +382,8 @@ class Table extends Component {
       <table className="table table-hover">
         <thead>
           <tr className="tableRow">
-            <th>#</th>
-            {this.state.visibleColumns['1'] ? <th id="column-1" style={{ color: this.state.selectedColumns.indexOf(1) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 0)}>
+            <th className="row-index z-index-100">#</th>
+            {this.state.visibleColumns['1'] ? <th className="row-index row-firstName z-index-100" id="column-1" style={{ color: this.state.selectedColumns.indexOf(1) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 0)}>
               First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
             </th> : null}
             {this.state.visibleColumns['2'] ? <th id="column-2" style={{ color: this.state.selectedColumns.indexOf(2) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 1)}>
@@ -416,8 +416,8 @@ class Table extends Component {
       <table className="table table-hover">
         <thead>
           <tr className="tableRow">
-            <th>#</th>
-            {this.state.visibleColumns['1'] ? <th id="column-1" style={{ color: this.state.selectedColumns.indexOf(1) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 0)}>
+            <th className="row-index z-index-100">#</th>
+            {this.state.visibleColumns['1'] ? <th className="row-index row-firstName z-index-100" id="column-1" style={{ color: this.state.selectedColumns.indexOf(1) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 0)}>
               First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
             </th> : null}
             {this.state.visibleColumns['2'] ? <th id="column-2" style={{ color: this.state.selectedColumns.indexOf(2) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 1)}>
