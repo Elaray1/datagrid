@@ -9,6 +9,15 @@ class Table extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      visibleColumns: {
+        '1': true,
+        '2': true,
+        '3': true,
+        '4': true,
+        '5': true,
+        '6': true,
+        '7': true,
+      },
       color: '#E9967A',
       selectedColumns: [],
       columnsColors: ['white', 'white', 'white', 'white', 'white', 'white', 'white'],
@@ -327,10 +336,19 @@ class Table extends Component {
     });
   }
 
+  changeCheckboxValue = (value) => {
+    this.setState({
+      visibleColumns: {
+        ...this.state.visibleColumns,
+        [value]: !this.state.visibleColumns[value],
+      }
+    });
+  }
+
   render() {
 
     const renderUsers = (user, index) => {
-      const tdInfo = user.map((el, i) => <td key={i + 100 * 10} style={{ color: this.state.columnsColors[i+1] }} >{el}</td>);
+      const tdInfo = user.map((el, i) => this.state.visibleColumns[i+1] ? <td key={i + 100 * 10} style={{ color: this.state.columnsColors[i+1] }} >{el}</td> : null);
       return (
         <tr key={index}>
           <th scope="row">{index + 1}</th>
@@ -344,7 +362,7 @@ class Table extends Component {
     const Row = ({ index, style }) => (
         <tr key={index} style={style} className="tableRow">
           <th scope="row">{index + 1}</th>
-          {items[index].map((el, i) => <td style={{ color: this.state.columnsColors[i+1] }} key={i + 100 * 10}>{el}</td>)}
+          {items[index].map((el, i) => this.state.visibleColumns[i+1] ? <td key={i + 100 * 10} style={{ color: this.state.columnsColors[i+1] }} >{el}</td> : null)}
         </tr>
     );
 
@@ -365,27 +383,27 @@ class Table extends Component {
         <thead>
           <tr className="tableRow">
             <th>#</th>
-            <th id="column-1" style={{ color: this.state.selectedColumns.indexOf(1) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 0)}>
+            {this.state.visibleColumns['1'] ? <th id="column-1" style={{ color: this.state.selectedColumns.indexOf(1) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 0)}>
               First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
-            </th>
-            <th id="column-2" style={{ color: this.state.selectedColumns.indexOf(2) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 1)}>
+            </th> : null}
+            {this.state.visibleColumns['2'] ? <th id="column-2" style={{ color: this.state.selectedColumns.indexOf(2) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 1)}>
               Last Name {(this.state.sortedColumns.lastName === 1 && <>&#9660;</>) || (this.state.sortedColumns.lastName === 2 && <>&#9650;</>)}
-            </th>
-            <th id="column-3" style={{ color: this.state.selectedColumns.indexOf(3) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 2)}>
+            </th> : null}
+            {this.state.visibleColumns['3'] ? <th id="column-3" style={{ color: this.state.selectedColumns.indexOf(3) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 2)}>
               Username {(this.state.sortedColumns.username === 1 && <>&#9660;</>) || (this.state.sortedColumns.username === 2 && <>&#9650;</>)}
-            </th>
-            <th id="column-4" style={{ color: this.state.selectedColumns.indexOf(4) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 3)}>
+            </th> : null }
+            {this.state.visibleColumns['4'] ? <th id="column-4" style={{ color: this.state.selectedColumns.indexOf(4) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 3)}>
               Email {(this.state.sortedColumns.email === 1 && <>&#9660;</>) || (this.state.sortedColumns.email === 2 && <>&#9650;</>)}
-            </th>
-            <th id="column-5" style={{ color: this.state.selectedColumns.indexOf(5) !== -1 ? 'red' : 'inherit' }} onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
+            </th> : null }
+            {this.state.visibleColumns['5'] ? <th id="column-5" style={{ color: this.state.selectedColumns.indexOf(5) !== -1 ? 'red' : 'inherit' }} onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
               Is working {(this.state.sortedColumns.isWorking === 1 && <>&#9660;</>) || (this.state.sortedColumns.isWorking === 2 && <>&#9650;</>)}
-            </th>
-            <th id="column-6" style={{ color: this.state.selectedColumns.indexOf(6) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 999)}>
+            </th> : null }
+            {this.state.visibleColumns['6'] ? <th id="column-6" style={{ color: this.state.selectedColumns.indexOf(6) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 999)}>
               Position
-            </th>
-            <th id="column-7" style={{ color: this.state.selectedColumns.indexOf(7) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 6)}>
+            </th> : null }
+            {this.state.visibleColumns['7'] ? <th id="column-7" style={{ color: this.state.selectedColumns.indexOf(7) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 6)}>
               State {(this.state.sortedColumns.state === 1 && <>&#9660;</>) || (this.state.sortedColumns.state === 2 && <>&#9650;</>)}
-            </th>
+            </th> : null }
           </tr>
         </thead>
         <tbody>
@@ -399,27 +417,27 @@ class Table extends Component {
         <thead>
           <tr className="tableRow">
             <th>#</th>
-            <th id="column-1" style={{ color: this.state.selectedColumns.indexOf(1) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 0)}>
+            {this.state.visibleColumns['1'] ? <th id="column-1" style={{ color: this.state.selectedColumns.indexOf(1) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 0)}>
               First Name {(this.state.sortedColumns.firstName === 1 && <>&#9660;</>) || (this.state.sortedColumns.firstName === 2 && <>&#9650;</>)}
-            </th>
-            <th id="column-2" style={{ color: this.state.selectedColumns.indexOf(2) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 1)}>
+            </th> : null}
+            {this.state.visibleColumns['2'] ? <th id="column-2" style={{ color: this.state.selectedColumns.indexOf(2) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 1)}>
               Last Name {(this.state.sortedColumns.lastName === 1 && <>&#9660;</>) || (this.state.sortedColumns.lastName === 2 && <>&#9650;</>)}
-            </th>
-            <th id="column-3" style={{ color: this.state.selectedColumns.indexOf(3) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 2)}>
+            </th> : null}
+            {this.state.visibleColumns['3'] ? <th id="column-3" style={{ color: this.state.selectedColumns.indexOf(3) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 2)}>
               Username {(this.state.sortedColumns.username === 1 && <>&#9660;</>) || (this.state.sortedColumns.username === 2 && <>&#9650;</>)}
-            </th>
-            <th id="column-4" style={{ color: this.state.selectedColumns.indexOf(4) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 3)}>
+            </th> : null }
+            {this.state.visibleColumns['4'] ? <th id="column-4" style={{ color: this.state.selectedColumns.indexOf(4) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 3)}>
               Email {(this.state.sortedColumns.email === 1 && <>&#9660;</>) || (this.state.sortedColumns.email === 2 && <>&#9650;</>)}
-            </th>
-            <th  id="column-5" style={{ color: this.state.selectedColumns.indexOf(5) !== -1 ? 'red' : 'inherit' }} onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
+            </th> : null }
+            {this.state.visibleColumns['5'] ? <th id="column-5" style={{ color: this.state.selectedColumns.indexOf(5) !== -1 ? 'red' : 'inherit' }} onClick={this.state.toggleButton ? null : this.sort.bind(this, 4)}>
               Is working {(this.state.sortedColumns.isWorking === 1 && <>&#9660;</>) || (this.state.sortedColumns.isWorking === 2 && <>&#9650;</>)}
-            </th>
-            <th id="column-6" style={{ color: this.state.selectedColumns.indexOf(6) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 999)}>
+            </th> : null }
+            {this.state.visibleColumns['6'] ? <th id="column-6" style={{ color: this.state.selectedColumns.indexOf(6) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 999)}>
               Position
-            </th>
-            <th id="column-7" style={{ color: this.state.selectedColumns.indexOf(7) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 6)}>
+            </th> : null }
+            {this.state.visibleColumns['7'] ? <th id="column-7" style={{ color: this.state.selectedColumns.indexOf(7) !== -1 ? 'red' : 'inherit' }} onClick={this.sort.bind(this, 6)}>
               State {(this.state.sortedColumns.state === 1 && <>&#9660;</>) || (this.state.sortedColumns.state === 2 && <>&#9650;</>)}
-            </th>
+            </th> : null }
           </tr>
         </thead>
       </table>
@@ -493,6 +511,34 @@ class Table extends Component {
                 <button type="button" className="btn btn-success" onClick={this.changeColumnsColor}>Change color</button>
               </div>
              : null}
+             <div className="form-check form-check-inline">
+               <input className="form-check-input" type="checkbox" name="firstNameCheckbox" id="firstNameCheckbox" onChange={this.changeCheckboxValue.bind(this, '1')} checked={this.state.visibleColumns['1']} />
+               <label className="form-check-label" htmlFor="firstNameCheckbox">First Name</label>
+             </div>
+             <div className="form-check form-check-inline">
+               <input className="form-check-input" type="checkbox" name="lastNameCheckbox" id="lastNameCheckbox" onChange={this.changeCheckboxValue.bind(this, '2')} checked={this.state.visibleColumns['2']} />
+               <label className="form-check-label" htmlFor="lastNameCheckbox">Last Name</label>
+             </div>
+             <div className="form-check form-check-inline">
+               <input className="form-check-input" type="checkbox" name="usernameCheckbox" id="usernameCheckbox" disabled checked/>
+               <label className="form-check-label" htmlFor="usernameCheckbox">Username</label>
+             </div>
+             <div className="form-check form-check-inline">
+               <input className="form-check-input" type="checkbox" name="emailCheckbox" id="emailCheckbox" onChange={this.changeCheckboxValue.bind(this, '4')} checked={this.state.visibleColumns['4']} />
+               <label className="form-check-label" htmlFor="emailCheckbox">Email</label>
+             </div>
+             <div className="form-check form-check-inline">
+               <input className="form-check-input" type="checkbox" name="isWorkingCheckbox" id="isWorkingCheckbox" onChange={this.changeCheckboxValue.bind(this, '5')} checked={this.state.visibleColumns['5']} />
+               <label className="form-check-label" htmlFor="isWorkingCheckbox">IsWorking</label>
+             </div>
+             <div className="form-check form-check-inline">
+               <input className="form-check-input" type="checkbox" name="positionCheckbox" id="positionCheckbox" onChange={this.changeCheckboxValue.bind(this, '6')} checked={this.state.visibleColumns['6']} />
+               <label className="form-check-label" htmlFor="positionCheckbox">Position</label>
+             </div>
+             <div className="form-check form-check-inline">
+               <input className="form-check-input" type="checkbox" name="stateCheckbox" id="stateCheckbox" onChange={this.changeCheckboxValue.bind(this, '7')} checked={this.state.visibleColumns['7']} />
+               <label className="form-check-label" htmlFor="stateCheckbox">State</label>
+             </div>
           <TableContent />
       </div>
     );
